@@ -27,6 +27,7 @@ jobs:
           pylint main.py || true
 
   test:
+    needs: lint
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +52,9 @@ jobs:
           name: junit-xml-report
           path: junit.xml
 
+
   build:
+    needs: test
     name: Build Project
     runs-on: ubuntu-latest
     steps:
