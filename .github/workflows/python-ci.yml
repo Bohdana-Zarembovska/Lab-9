@@ -1,0 +1,67 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install Dependencies
+        run: pip install pylint
+
+      - name: Run Pylint
+        run: |
+          pylint main.py || true
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install Dependencies
+        run: pip install pytest pytest-cov pytz sympy
+
+      - name: Run Tests with Coverage
+        run: |
+          pytest --cov=main --cov-report=xml --cov-fail-under=50 --junitxml=junit.xml
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-xml-report
+          path: junit.xml
+
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
